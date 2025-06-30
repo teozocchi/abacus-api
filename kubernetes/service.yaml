@@ -1,0 +1,12 @@
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: abacus-api-service
+spec:
+  selector:
+    app: abacus-api
+  ports:
+    - protocol: TCP
+      port: 80 # this is the port exposed by the service
+      targetPort: 5000 # this however is the port on the container (flask's port)    

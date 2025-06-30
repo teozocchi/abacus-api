@@ -1,0 +1,35 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abacus-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: abacus-api
+  template:
+    metadata:
+      labels:
+        app: abacus-api
+    spec:
+      containers:
+      - name: abacus-api-container
+        image: zocchimatteo/abacus-api:v1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        
+        # probes are probally are still a good idea
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
