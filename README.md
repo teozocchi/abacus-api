@@ -91,7 +91,7 @@ This is the standard procedure for running a new batch of reconciliations.
 1.  **Establish a Local Connection (Port Forwarding)**  
     If running the client script from a machine outside the Kubernetes cluster, create a network tunnel. Open a dedicated terminal and leave this command running:
     ```bash
-    kubectl port-forward svc/janus-api-service 8080:80
+    kubectl port-forward svc/abacus-api-service 8080:80
     ```
 
 2.  **Execute the Demo Workflow**  
