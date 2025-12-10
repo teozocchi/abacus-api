@@ -1,7 +1,5 @@
 # abacus-api - a hybrid financial reconciliation engine
 
-**version:** 1.0  
-**author:** Matteo Zocchi
 
 [![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/downloads/release/python-310/)
 [![Flask](https://img.shields.io/badge/Flask-2.x-black.svg)](https://flask.palletsprojects.com/)
@@ -12,15 +10,16 @@
 
 ## 1. Project Overview
 
-abacus-api is a high-performance, containerized web service designed to solve a complex **financial reconciliation problem**. Given a single payment (`bonifico`), it intelligently searches through a large set of invoices (`fatture`) to find the exact combination that sums up to the payment amount.
-This project was conceived to tackle a computationally "impossible" NP-hard problem (subset sum) in order to transform it from a manual, multi-hour process into an automated task that completes in seconds.
+abacus-api is a high-performance containerized web service that solves complex reconcilition problems. Given a single payment (`bonifico`) it searches through a large set of invoices (`fatture`) to find the exact combination that sums up to the payment amount.
+
+Conceived to solve the NP-hard problem (subset sum) in order to transform it from a manual multi-hour process in an automated task that completes in seconds.
 
 ### 1.1. Key Features
 
-*   **Hybrid Algorithmic Core:** Intelligently switches between a perfect, **exact backtracking algorithm** for small, solvable datasets and a fast, reliable **greedy heuristic** for larger ones.
-*   **Business-Aware Logic:** Includes sophisticated features like credit note (`nota di credito`) netting and an ambiguity resolver that selects the most plausible solution among multiple perfect matches.
-*   **Stateless, Scalable Architecture:** Built as a stateless Flask API, containerized with Docker, and designed for orchestration with Kubernetes, this allowing for horizontal scalability.
-*   **High-Performance Runtime:** Leverages the **PyPy** Just-in-Time (JIT) compiler for significant performance gains on the computationally intensive core logic.
+*   **Hybrid Algorithmic core:** Intelligently switches between a perfect, **exact backtracking algorithm** for small, solvable datasets and a fast, reliable **greedy heuristic** for larger ones.
+*   **Business-aware logic:** Includes sophisticated features like credit note (`nota di credito`) netting and an ambiguity resolver that selects the most plausible solution among multiple perfect matches.
+*   **Stateless, scalable architecture:** Built as a stateless Flask API, containerized and designed for orchestration with Kubernetes, allowing for horizontal scalability.
+*   **High-performance runtime:** Leverages the **PyPy** JIT compiler for significant performance on the computationally intensive core logic.
 
 ### 1.2. System Architecture
 
@@ -100,15 +99,3 @@ This is the standard procedure for running a new batch of reconciliations.
     python client/run_demo.py
     ```
     The script will call the service for each task defined within it, dynamically passing the correct invoice dataset and parameters. The final, consolidated report will be saved to `final_workflow_report.json`.
-
----
-
-## 5. Troubleshooting Guide
-
-| Problem / Error                                     | Probable Cause                                                                          | Solution                                                                                                                               |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Build Error:** `no space left on device`          | The `.dockerignore` file is missing or not configured, causing large files (like `.venv`) to be copied into the image. | Ensure a comprehensive `.dockerignore` file exists in the project root.                                                            |
-| **Build Error:** `Unknown compiler(s): [['cc']...`  | The `Dockerfile` is missing the command to install the C compiler required by `pandas`. | Ensure `RUN apt-get update && apt-get install -y build-essential` is present in the `Dockerfile` before the `pip install` command. |
-| **Pod `CrashLoopBackOff`** with `ModuleNotFoundError` | A required Python package is not installed in the Docker image.                         | Verify that `requirements.txt` is complete. Re-run the full Docker build and push process (Step 3.2).                                 |
-| **Client Error:** `Connection refused`              | The `kubectl port-forward` command is not running, or the client is using the wrong URL/port. | Ensure the `port-forward` command is active in a separate terminal before running the client script.                                 |
-| **Client Error:** `TypeError: Timestamp...`         | The client is sending a `pandas.Timestamp` object, which is not valid JSON.             | Ensure the client script converts datetime objects to strings (e.g., with `.isoformat()`) before sending them in the API call.  |
